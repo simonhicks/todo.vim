@@ -55,7 +55,7 @@ endfunction
 
 function! s:command(string)
   if len(a:string) ==# 0
-    e g:todo_vim_file_path
+    execute "e ".g:todo_vim_file_path
   else
     call s:additem(g:todo_vim_file_path, a:string)
   endif
