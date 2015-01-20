@@ -53,12 +53,12 @@ function! s:additem(file, text)
   endif
 endfunction
 
-function! s:command(...)
-  if len(a:000) ==# 0
+function! s:command(string)
+  if len(a:string) ==# 0
     e g:todo_vim_file_path
   else
-    call s:additem(g:todo_vim_file_path, a:1)
+    call s:additem(g:todo_vim_file_path, a:string)
   endif
 endfunction
 
-command! -nargs=+ Todo call <SID>command("<args>")
+command! -nargs=* Todo call <SID>command("<args>")

@@ -24,9 +24,9 @@ Defaults to `~/todo`
 
     :Todo buy toilet paper
 
-This will add "[ ] buy toilet paper" to your todo list. I tend to have my todo file open most of the
-time and there are often unsaved changes, so this command should pretty much always do what you'd
-want it to regardless of whether the buffer is open, modified, hidden, etc.
+This will add "[ ] buy toilet paper" to your todo list. I have my todo file open pretty much all the
+time and there are often unsaved changes, so I've tried to make sure this command should pretty much
+always do what you'd want it to regardless of whether the buffer is open, modified, hidden, etc.
 
 ### Mark items as done/not done
 
