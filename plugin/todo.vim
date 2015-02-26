@@ -3,11 +3,11 @@ if exists("g:todo_vim_loaded")
 endif
 let g:todo_vim_loaded = 1
 
-if !exists("g:todo_vim_file_path")
-  let g:todo_vim_file_path = '~/todo'
+if !exists("g:todo_vim_files")
+  let g:todo_vim_files = { 'Todo': '~/todo' }
 endif
-let s:path = fnamemodify(g:todo_vim_file_path, ':p')
 
+" TODO
 " States to support
 " - todo buffer not open
 " - todo buffer open, visible & saved
@@ -17,8 +17,8 @@ let s:path = fnamemodify(g:todo_vim_file_path, ':p')
 
 " returns true if there's no buffer for the todo-file or the buffer has no
 " saved changes (ie if it's safe for us to write directly to the file)
-function! s:issafetowrite()
-  let bufnum = bufnr(s:path)
+function! s:issafetowrite(path)
+  let bufnum = bufnr(a:path)
   return (bufnum ==# -1) || (! getbufvar(bufnum, "&modified"))
 endfunction
 
@@ -27,58 +27,84 @@ function! s:refreshcurrentbuffer()
   call feedkeys('<CR>')
 endfunction
 
-function! s:refreshotherbuffer()
+function! s:refreshotherbuffer(path)
   let oldbufnum = bufnr('%')
   let oldautoread = &autoread
   set autoread
-  execute 'b '.bufnr(s:path)
+  execute 'b '.bufnr(a:path)
   let &autoread = oldautoread
   execute 'b '.oldbufnum
 endfunction
 
-function! s:refreshbuffer()
-  let todobufnum = bufnr(s:path)
+function! s:refreshbuffer(path)
+  let todobufnum = bufnr(a:path)
   if (todobufnum ==# bufnr('%'))
     call s:refreshcurrentbuffer()
   elseif (todobufnum !=# -1)
-    call s:refreshotherbuffer()
+    call s:refreshotherbuffer(a:path)
   endif
 endfunction
 
-function! s:additemtofile(item)
-  let lines = readfile(s:path)
-  if filewritable(s:path)
-    call writefile(add(lines, a:item), s:path)
-    call s:refreshbuffer()
+function! s:appendlinestofile(path, lines)
+  let lines = readfile(a:path)
+  if filewritable(a:path)
+    call writefile(extend(lines, a:lines), a:path)
+    call s:refreshbuffer(a:path)
   endif
 endfunction
 
-function! s:additemtobuffer(item)
+function! s:appendlinestobuffer(path, lines)
   let oldbufnum = bufnr('%')
-  execute 'b '.bufnr(s:path)
-  call append('$', a:item)
+  execute 'b '.bufnr(a:path)
+  call append('$', a:lines)
   execute 'b '.oldbufnum
 endfunction
 
-" Add a todo item to the todo file.
 " this checks whether the file is open with unsaved changes to see if it's
-" safe to write directly to the file and if it's not safe, it appends the item
+" safe to write directly to the file and if it's not safe, it appends the line
 " to the unsaved buffer instead.
-function! s:additem(text)
+function! s:appendlinessafely(path, lines)
+  if s:issafetowrite(a:path)
+    call s:appendlinestofile(a:path, a:lines)
+  else
+    call s:appendlinestobuffer(a:path, a:lines)
+  endif
+endfunction
+
+function! s:additem(path, text)
   let item = '[ ] '.a:text
-  if s:issafetowrite()
-    call s:additemtofile(item)
+  call s:appendlinessafely(a:path, [item])
+endfunction
+
+function! s:moveto(path, start, end)
+  let rega = @a
+  try
+    execute a:start . "," . a:end . "d a"
+    let lines = split(@a, "\n")
+    call s:appendlinessafely(a:path, lines)
+  finally
+    let @a = rega
+  endtry
+endfunction
+
+function! s:command(path, start, end, count, string)
+  if len(a:string) ># 0
+    call s:additem(a:path, a:string)
+  elseif (a:count !=# -1)
+    call s:moveto(a:path, a:start, a:end)
   else
-    call s:additemtobuffer(item)
+    execute "e " . a:path
   endif
 endfunction
 
-function! s:command(string)
-  if len(a:string) ==# 0
-    execute "e ".g:todo_vim_file_path
-  else
-    call s:additem(a:string)
-  endif
+function! s:initializetodo()
+  for name in keys(g:todo_vim_files)
+    let path = fnamemodify(g:todo_vim_files[name], ':p')
+    if !filereadable(path)
+      call system("touch '" . path . "'")
+    endif
+    execute "command! -range -nargs=* " . name . " call <SID>command('" . path . "', <line1>, <line2>, <count>, '<args>')"
+  endfor
 endfunction
 
-command! -nargs=* Todo call <SID>command("<args>")
+call s:initializetodo()
