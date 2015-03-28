@@ -32,7 +32,6 @@ endfunction
 
 function! s:getstate(line)
   let l = getline(a:line)
-  echom l
   if match(l, '^\[\(.\)\]') != -1
     return matchlist(l, '^\[\(.\)\]')[1] ==# 'X'
   else
