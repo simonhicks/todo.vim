@@ -103,7 +103,7 @@ function! s:initializetodo()
     if !filereadable(path)
       call system("touch '" . path . "'")
     endif
-    execute "command! -range -nargs=* " . name . " call <SID>command('" . path . "', <line1>, <line2>, <count>, '<args>')"
+    execute "command! -range -nargs=* " . name . " call <SID>command('" . path . "', <line1>, <line2>, <count>, <q-args>)"
   endfor
 endfunction
 
