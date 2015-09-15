@@ -8,6 +8,7 @@ function! s:before_substitute(line)
   let state['register'] = @/
   let state['gdefault'] = &gdefault
   let state['position'] = getpos('.')
+  let state['hl'] = &hl
   set nogdefault
   exec "normal! ".line(a:line)."gg"
   return state
@@ -19,6 +20,7 @@ function! s:after_substitute(state)
   endif
   call setpos('.', a:state['position'])
   let @/ = a:state['register']
+  let &hl = a:state['hl']
   redraw!
 endfunction
 
