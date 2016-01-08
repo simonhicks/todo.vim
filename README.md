@@ -66,8 +66,12 @@ pressing `V`) and then invoking `:'<,'>Track` to move it to `~/track.todo`
 
 ### Mark items as done/not done
 
-Use `]d` to mark an item as finished, and `[d` to reset it to unfinished. These bindings are set
-on the 'todo' filetype, which is turned on for the '.todo' extension and for files called 'todo'
+The plugin exposes three functions for altering the state of a line (`todo#check(lnum)`,
+`todo#uncheck(lnum)` and `todo#toggle(lnum)`). Hopefully it's obvious what they do.
+
+In files with the `todo` filetype, by default `[d` and `]d` are mapped to uncheck and check the
+current line respectively. If you'd rather set up your own mappings, set `g:todo_vim_no_mappings` to
+something non-zero and no todo.vim won't set up any mappings
 
 ### Other thoughts
 

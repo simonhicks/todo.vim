@@ -3,9 +3,8 @@ if exists("g:loaded_todo_vim_autoload")
 endif
 let g:loaded_todo_vim_autoload = 1
 
-function! s:before_substitute(line)
+function! s:beforesubstitute(line)
   let state = {}
-  let state['register'] = @/
   let state['gdefault'] = &gdefault
   let state['position'] = getpos('.')
   set nogdefault
@@ -13,40 +12,50 @@ function! s:before_substitute(line)
   return state
 endfunction
 
-function! s:after_substitute(state)
+function! s:aftersubstitute(state)
   if a:state['gdefault']
     set gdefault
   endif
   call setpos('.', a:state['position'])
-  let @/ = a:state['register']
   redraw!
 endfunction
 
-function! s:substitute(line, pattern, replacement)
-  let state = s:before_substitute(a:line)
-  if match(getline('.'), a:pattern) != -1
-    exec "normal! V:s/".a:pattern."/".a:replacement.""
-  endif
-  call s:after_substitute(state)
+function! s:getchar(state)
+  return a:state == 1 ? 'X' : ' '
+endfunction
+
+function! s:togglestate(state)
+  return a:state == 1 ? 0 : (a:state == 0 ? 1 : -1)
+endfunction
+
+function! s:setstate(line, new_state)
+  let state = s:beforesubstitute(a:line)
+  exec "norm! ^lr".s:getchar(a:new_state)
+  call s:aftersubstitute(state)
 endfunction
 
 function! s:getstate(line)
   let l = getline(a:line)
-  if match(l, '^\[\(.\)\]') != -1
-    return matchlist(l, '^\[\(.\)\]')[1] ==# 'X'
+  if match(l, '^\s*\[\(.\)\]') != -1
+    return matchlist(l, '^\s*\[\(.\)\]')[1] ==# 'X'
   else
     return -1
   endif
 endfunction
 
+function! todo#toggle(line)
+  let new_state = s:togglestate(s:getstate(a:line))
+  call s:setstate(a:line, new_state)
+endfunction
+
 function! todo#uncheck(line)
   if s:getstate(a:line) == 1
-    call s:substitute(a:line, "\\[X\\]", "[ ]")
+    call todo#toggle(a:line)
   endif
 endfunction
 
 function! todo#check(line)
   if s:getstate(a:line) == 0
-    call s:substitute(a:line, "\\[ \\]", "[X]")
+    call todo#toggle(a:line)
   endif
 endfunction
