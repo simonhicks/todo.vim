@@ -7,7 +7,6 @@ if !exists("g:todo_vim_files")
   let g:todo_vim_files = { 'Todo': '~/todo' }
 endif
 
-" TODO
 " States to support
 " - todo buffer not open
 " - todo buffer open, visible & saved
