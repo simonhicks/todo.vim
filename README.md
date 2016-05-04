@@ -38,7 +38,7 @@ This will add "[ ] buy toilet paper" to your todo list. I have my todo file open
 time and there are often unsaved changes, so I've tried to make sure this always does what you'd
 want it to regardless of whether the buffer is open, modified, hidden, etc.
 
-In other words, if the file is closed or open and modified, it'll add your todo directly to the file
+In other words, if the file is closed or open and unmodified, it'll add your todo directly to the file
 and refresh the buffer. On the other hand if the file is open and there are unsaved changes, it'll
 add the new todo to the modified buffer instead. In that case you'll have to manually save the
 buffer.
