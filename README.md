@@ -3,12 +3,12 @@
 This is a minimal vim plugin for handling simple todo files that look like this:
 
     [ ] This is a TODO item
-    [ ] ! This is an important TODO item
+    [ ] ! This is a high priority TODO item
     [X] This item is finished
 
 It provides bindings for checking/unchecking items, adding/removing the bang, a command to open
-named todo files and a command to add a todo item to each file from anywhere in vim. That's all it
-does.
+named todo files, a command to add a todo item to each file from anywhere in vim and syntax
+highlighting to make high priority items stand out. That's all it does.
 
 ## USAGE
 
@@ -36,7 +36,7 @@ Assuming you're using the default config you can open your todo file like so:
 
     :Todo buy toilet paper
 
-This will add "[ ] buy toilet paper" to your todo list. I have my todo file open pretty much all the
+This will add `[ ] buy toilet paper` to your todo list. I have my todo file open pretty much all the
 time and there are often unsaved changes, so I've tried to make sure this always does what you'd
 want it to regardless of whether the buffer is open, modified, hidden, etc.
 
@@ -45,11 +45,11 @@ and refresh the buffer. On the other hand if the file is open and there are unsa
 add the new todo to the modified buffer instead. In that case you'll have to manually save the
 buffer.
 
-You can also run that same command with a bang...
+You can also run that same command with a bang to add a high priority item...
 
     :Todo! buy toilet paper
 
-Which will add "[ ] ! buy toilet paper" to your todo list.
+That will add `[ ] ! buy toilet paper` to your todo list.
 
 ### Move lines of text into a named todo file
 
@@ -112,3 +112,12 @@ task or group todo items into categories under a title like this:
 
 Non todo-item lines like that can be transfered between files using `:'<,'>Todo` or `:'<,'>Track`
 (or whatever), but they will be ignored if you try to mark them as done or not-done
+
+If your todo list gets too long, it's quite nice to be able to fold items too. Personally I fold by
+paragraphs (i.e. a block of text with no empty lines in it is a single fold). You can do that by
+adding the following lines to `~/.vim/ftplugin/todo.vim`
+
+    set foldexpr=getline(v:lnum)=~'^\\s*$'&&getline(v:lnum+1)=~'\\S'?'0':1
+    setlocal foldmethod=expr
+
+
