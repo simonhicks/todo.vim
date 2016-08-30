@@ -51,7 +51,6 @@ endfunction
 
 let s:priorityregex = '^\s*\[.\] \(.\)'
 
-" TODO this is basically the same as s:getstate... refactor
 function! s:getpriority(line)
   let l = getline(a:line)
   if match(l, s:priorityregex) != -1
@@ -71,7 +70,42 @@ function! s:setpriority(line, new_priority)
   call s:aftersubstitute(bufferstate)
 endfunction
 
+" navigation
+
+function! s:nextpriorityitem(line)
+  let l = line(a:line) + 1
+  let endline = line('$')
+  while s:getpriority(l) !=# 1 && l <= endline
+    let l += 1
+  endwhile
+  if l > endline
+    return -1
+  else
+    return l
+  endif
+endfunction
+
+function! s:prevpriorityitem(line)
+  let l = line(a:line) - 1
+  let endline = 1
+  while s:getpriority(l) !=# 1 && l >= endline
+    let l -= 1
+  endwhile
+  if l == 0
+    return -1
+  else
+    return l
+  endif
+endfunction
+
 " exports
+
+function! todo#findpriority(line, direction)
+  let line = a:direction == 'next' ? s:nextpriorityitem(a:line) : s:prevpriorityitem(a:line)
+  if line != -1
+    execute "normal! ".line."gg"
+  endif
+endfunction
 
 function! todo#toggle(line)
   let new_state = s:toggleboolean(s:getstate(a:line))

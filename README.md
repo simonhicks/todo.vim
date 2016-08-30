@@ -3,10 +3,12 @@
 This is a minimal vim plugin for handling simple todo files that look like this:
 
     [ ] This is a TODO item
+    [ ] ! This is an important TODO item
     [X] This item is finished
 
-It provides bindings for checking and unchecking items, a command to open named todo files and a
-command to add a todo item to each file from anywhere in vim. That's all it does.
+It provides bindings for checking/unchecking items, adding/removing the bang, a command to open
+named todo files and a command to add a todo item to each file from anywhere in vim. That's all it
+does.
 
 ## USAGE
 
@@ -43,6 +45,12 @@ and refresh the buffer. On the other hand if the file is open and there are unsa
 add the new todo to the modified buffer instead. In that case you'll have to manually save the
 buffer.
 
+You can also run that same command with a bang...
+
+    :Todo! buy toilet paper
+
+Which will add "[ ] ! buy toilet paper" to your todo list.
+
 ### Move lines of text into a named todo file
 
 You can move selected lines from any file or buffer into a named todo file by invoking the ex
@@ -64,14 +72,24 @@ So. In this case what I would do is select the line containing that item in my t
 pressing `V`) and then invoking `:'<,'>Track` to move it to `~/track.todo`
 
 
-### Mark items as done/not done
+### Default keybindings
 
-The plugin exposes three functions for altering the state of a line (`todo#check(lnum)`,
-`todo#uncheck(lnum)` and `todo#toggle(lnum)`). Hopefully it's obvious what they do.
+In files with the `todo` filetype, by default `[d` / `]d` are mapped to uncheck/check the current
+line respectively, and `[p` / `]p` are mapped to remove/add the "!" indicator for high priority
+items. `[[` and `]]` are mapped to jump to the previous or next high priority item.
 
-In files with the `todo` filetype, by default `[d` and `]d` are mapped to uncheck and check the
-current line respectively. If you'd rather set up your own mappings, set `g:todo_vim_no_mappings` to
-something non-zero and no todo.vim won't set up any mappings
+If you'd rather set up your own mappings, set `g:todo_vim_no_mappings` to something non-zero
+and no todo.vim won't set up any mappings and you can use the following functions:
+
+- `todo#check(lnum)`: Mark the item on line `a:lnum` as complete.
+- `todo#uncheck(lnum)`: Mark the item on line `a:lnum` as incomplete.
+- `todo#toggle(lnum)`: Toggle the completeness state of the item on line `a:lnum`.
+- `todo#highpriority(lnum)`: Add the high priority flag to the item on line `a:lnum`.
+- `todo#lowpriority(lnum)`: Remove the high priority flag from the item on line `a:lnum`. 
+- `todo#togglepriority(lnum)`: Toggle the high priority flag on the item on line `a:lnum`.
+- `todo#jumptopriority(lnum, direction)`: Jump to the next/previous line after/before `a:lnum` which
+  contains an item flagged as high priority. If `a:direction` is `'next'` it will jump forwards
+  (down the screen). Otherwise it will jump backwards.
 
 ### Other thoughts
 

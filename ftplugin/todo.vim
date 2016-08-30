@@ -8,4 +8,6 @@ if !exists("g:todo_vim_no_mappings") || g:todo_vim_no_mappings !=# 0
   nnoremap ]d :silent call todo#check('.')<CR>
   nnoremap [p :silent call todo#lowpriority('.')<CR>
   nnoremap ]p :silent call todo#highpriority('.')<CR>
+  nnoremap [[ :silent call todo#findpriority('.', 'prev')<CR>
+  nnoremap ]] :silent call todo#findpriority('.', 'next')<CR>
 endif

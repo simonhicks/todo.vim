@@ -70,8 +70,12 @@ function! s:appendlinessafely(path, lines)
   endif
 endfunction
 
-function! s:additem(path, text)
-  let item = '[ ] '.a:text
+function! s:additem(path, text, bang)
+  let priority = ''
+  if a:bang ==# '!'
+    let priority = '! '
+  endif
+  let item = '[ ] '.priority.a:text
   call s:appendlinessafely(a:path, [item])
 endfunction
 
@@ -86,9 +90,9 @@ function! s:moveto(path, start, end)
   endtry
 endfunction
 
-function! s:command(path, start, end, count, string)
+function! s:command(path, start, end, count, string, bang)
   if len(a:string) ># 0
-    call s:additem(a:path, a:string)
+    call s:additem(a:path, a:string, a:bang)
   elseif (a:count !=# -1)
     call s:moveto(a:path, a:start, a:end)
   else
@@ -102,7 +106,7 @@ function! s:initializetodo()
     if !filereadable(path)
       call system("touch '" . path . "'")
     endif
-    execute "command! -range -nargs=* " . name . " call <SID>command('" . path . "', <line1>, <line2>, <count>, <q-args>)"
+    execute "command! -bang -range -nargs=* " . name . " call <SID>command('" . path . "', <line1>, <line2>, <count>, <q-args>, '<bang>')"
   endfor
 endfunction
 
