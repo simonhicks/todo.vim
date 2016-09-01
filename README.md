@@ -8,7 +8,7 @@ This is a minimal vim plugin for handling simple todo files that look like this:
 
 It provides bindings for checking/unchecking items, adding/removing the bang, a command to open
 named todo files, a command to add a todo item to each file from anywhere in vim and syntax
-highlighting to make high priority items stand out. That's all it does.
+highlighting to make high priority items stand out.
 
 ## USAGE
 
@@ -79,7 +79,7 @@ line respectively, and `[p` / `]p` are mapped to remove/add the "!" indicator fo
 items. `[[` and `]]` are mapped to jump to the previous or next high priority item.
 
 If you'd rather set up your own mappings, set `g:todo_vim_no_mappings` to something non-zero
-and no todo.vim won't set up any mappings and you can use the following functions:
+and todo.vim won't set up any mappings and you can use the following functions:
 
 - `todo#check(lnum)`: Mark the item on line `a:lnum` as complete.
 - `todo#uncheck(lnum)`: Mark the item on line `a:lnum` as incomplete.
