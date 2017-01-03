@@ -117,7 +117,7 @@ If your todo list gets too long, it's quite nice to be able to fold items too. P
 paragraphs (i.e. a block of text with no empty lines in it is a single fold). You can do that by
 adding the following lines to `~/.vim/ftplugin/todo.vim`
 
-    set foldexpr=getline(v:lnum)=~'^\\s*$'&&getline(v:lnum+1)=~'\\S'?'0':1
+    setlocal foldexpr=getline(v:lnum)=~'^\\s*$'&&getline(v:lnum+1)=~'\\S'?'0':1
     setlocal foldmethod=expr
 
 
