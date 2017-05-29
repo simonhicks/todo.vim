@@ -91,6 +91,9 @@ function! s:moveto(path, start, end)
 endfunction
 
 function! s:command(path, start, end, count, string, bang)
+  if !filereadable(a:path)
+    call system("touch '" . a:path . "'")
+  endif
   if len(a:string) ># 0
     call s:additem(a:path, a:string, a:bang)
   elseif (a:count !=# -1)
@@ -100,14 +103,27 @@ function! s:command(path, start, end, count, string, bang)
   endif
 endfunction
 
-function! s:initializetodo()
+function! s:setuptodocommand(name, path)
+  execute "command! -bang -range -nargs=* " . a:name 
+        \ . " call <SID>command('" . a:path . "', <line1>, <line2>, <count>, <q-args>, '<bang>')"
+endfunction
+
+function! s:initializeglobaltodos()
   for name in keys(g:todo_vim_files)
     let path = fnamemodify(g:todo_vim_files[name], ':p')
-    if !filereadable(path)
-      call system("touch '" . path . "'")
-    endif
-    execute "command! -bang -range -nargs=* " . name . " call <SID>command('" . path . "', <line1>, <line2>, <count>, <q-args>, '<bang>')"
+    call s:setuptodocommand(name, path)
   endfor
+endfunction
+
+function! s:initializeprojecttodo()
+  if exists("g:todo_vim_project_todo")
+    call s:setuptodocommand("ProjectTodo", g:todo_vim_project_todo)
+  endif
+endfunction
+
+function! s:initializetodo()
+  call s:initializeglobaltodos()
+  call s:initializeprojecttodo()
 endfunction
 
 call s:initializetodo()

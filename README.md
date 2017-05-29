@@ -20,11 +20,18 @@ Here is my todo.vim config.
           \   'Todo': '~/todo',
           \   'Track': '~/track.todo'
           \ }
+    let g:todo_vim_project_todo = "./project.todo"
 
-This sets up two ex commands `:Todo` and `:Track`, each one performing the same set of operations on
-a todo file at the configured path.
+The `g:todo_vim_files` setting sets up two ex commands `:Todo` and `:Track`, each one performing the
+same set of operations on a todo file at the configured path. These paths are considered global, and
+will be converted to absolute paths when you start vim. Putting relative paths here is almost always
+a mistake.
 
-The default configuration is `{ 'Todo': ~/todo }`
+The default configuration for `g:todo_vim_files` is `{ 'Todo': ~/todo }`
+
+The `g:todo_vim_project_todo` setting creates a command `:ProjectTodo`, which will perform the same
+set of operations on a todo file at the configured path *as a relative path* (relative to vim's
+`pwd`). This can be used for project specific todo lists, stored at the root of a project directory.
 
 ### Open your todo file
 
