@@ -14,7 +14,7 @@ highlighting to make high priority items stand out.
 
 ### Configure your todo files
 
-Here is my todo.vim config.
+Here is an example todo.vim config.
 
     let g:todo_vim_files = {
           \   'Todo': '~/todo',
@@ -32,6 +32,12 @@ The default configuration for `g:todo_vim_files` is `{ 'Todo': ~/todo }`
 The `g:todo_vim_project_todo` setting creates a command `:ProjectTodo`, which will perform the same
 set of operations on a todo file at the configured path *as a relative path* (relative to vim's
 `pwd`). This can be used for project specific todo lists, stored at the root of a project directory.
+
+### Configuring todo home
+
+You can also set `g:todo_vim_home` to a directory and todo.vim will scan that directory, setting up
+any `*.todo` files it finds, binding them to a command that matches the filename with the first
+letter capitalized and the remainder lowercase.
 
 ### Open your todo file
 
@@ -97,6 +103,12 @@ and todo.vim won't set up any mappings and you can use the following functions:
 - `todo#jumptopriority(lnum, direction)`: Jump to the next/previous line after/before `a:lnum` which
   contains an item flagged as high priority. If `a:direction` is `'next'` it will jump forwards
   (down the screen). Otherwise it will jump backwards.
+
+### Dynamically adding new files
+
+Sometimes it's useful to add a new todo command at runtime (for example for a throwaway todo list).
+You can do this using `:AddTodoCommand <path>`. This will add a todo command for the given file
+using the filename for the command name (first letter capitalized, remainder lowercase).
 
 ### Other thoughts
 

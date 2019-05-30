@@ -3,7 +3,7 @@ if exists("g:todo_vim_loaded")
 endif
 let g:todo_vim_loaded = 1
 
-if !exists("g:todo_vim_files")
+if !exists("g:todo_vim_files") && !exists("g:todo_vim_home")
   let g:todo_vim_files = { 'Todo': '~/todo' }
 endif
 
@@ -122,8 +122,32 @@ function! s:initializeprojecttodo()
 endfunction
 
 function! s:initializetodo()
+  call s:scanForTodoFiles()
   call s:initializeglobaltodos()
   call s:initializeprojecttodo()
 endfunction
+
+function! s:pathtocommandname(path)
+  let name = fnamemodify(a:path, ":t:r")
+  return toupper(name[0]) . name[1:]
+endfunction
+
+function! s:scanForTodoFiles()
+  if exists("g:todo_vim_home")
+    for path in split(system("ls ".g:todo_vim_home), "\n")
+      if fnamemodify(path, ":e") ==# "todo"
+        let g:todo_vim_files[s:pathtocommandname(path)] = fnamemodify(g:todo_vim_home . '/' . path, ':p')
+      endif
+    endfor
+  endif
+endfunction
+
+function! s:addTodoCommand(path)
+  let name = fnamemodify(a:path, ':t:r')
+  let name = toupper(name[0]).name[1:]
+  call s:setuptodocommand(name, fnamemodify(a:path, ':p'))
+endfunction
+
+command! -nargs=1 AddTodoCommand call <SID>addTodoCommand(<args>)
 
 call s:initializetodo()
